@@ -12,7 +12,7 @@ namespace MarkAllRead
         private readonly Dictionary<string, Outlook.Folder> _nameToFolders;
         private readonly HashSet<Outlook.Folder> _selectedFolders;
 
-        public IReadOnlyCollection<Outlook.Folder> SelectedFolders => _selectedFolders;
+        public IReadOnlyList<Outlook.Folder> SelectedFolders => _selectedFolders.ToList();
 
         public DialogLauncher(Outlook.Application application, IEnumerable<string> alreadySelected = null)
         {
@@ -29,8 +29,9 @@ namespace MarkAllRead
         {
             var folders = _application.Session.DefaultStore.GetRootFolder().Folders;
 
-            foreach (Outlook.Folder folder in folders)
+            for (int f = folders.Count; f > 0; f--)
             {
+                var folder = folders[f] as Outlook.Folder ?? throw new InvalidCastException();
                 var name = folder.Name;
 
                 if (!_nameToFolders.ContainsKey(name))
@@ -44,6 +45,8 @@ namespace MarkAllRead
                     _selectedFolders.Add(folder);
                 }
             }
+
+            checkedListBox1.TopIndex = 0;
         }
 
         private void okButton_Click(object sender, EventArgs e)

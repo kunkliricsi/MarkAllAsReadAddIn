@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.757
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkAllAsReadAddIn", "MarkAllRead\MarkAllAsReadAddIn.csproj", "{003883C6-48C4-449A-80EE-384931A9C88A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkAllAsReadAddIn", "MarkAllAsReadAddIn\MarkAllAsReadAddIn.csproj", "{003883C6-48C4-449A-80EE-384931A9C88A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

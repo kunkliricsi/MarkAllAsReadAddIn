@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Outlook = Microsoft.Office.Interop.Outlook;
@@ -10,7 +11,7 @@ namespace MarkAllRead
 {
     public partial class MarkAllAsReadRibbon
     {
-        private IReadOnlyCollection<Outlook.Folder> _folders;
+        private IReadOnlyList<Outlook.Folder> _folders;
         private DialogLauncher _form;
 
         private void MarkAllAsRead_Load(object sender, RibbonUIEventArgs e)
@@ -43,13 +44,25 @@ namespace MarkAllRead
 
             Task.Run(() =>
             {
-                for (int i = 0; i < 7; i++)
-                    foreach (var folder in _folders)
-                        foreach (Outlook.MailItem item in folder.Items.Restrict("[Unread]=true"))
+                foreach (var folder in _folders)
+                {
+                    var folderItems = folder.Items.Restrict("[Unread]=true");
+
+                    for (int m = folderItems.Count; m > 0; m--)
+                    {
+                        Outlook.MailItem mail = folderItems[m];
+
+                        if (mail.UnRead)
                         {
-                            item.UnRead = false;
-                            item.Save();
+                            mail.UnRead = false;
+                            mail.Save();
                         }
+
+                        Marshal.ReleaseComObject(mail);
+                    }
+
+                    Marshal.ReleaseComObject(folderItems);
+                }
             });
         }
     }
