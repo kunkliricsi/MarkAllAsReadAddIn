@@ -55,10 +55,5 @@ namespace MarkAllRead
                 _selectedFolders.Add(_nameToFolders[item]);
             }
         }
-
-        private void cancelButton_Click(object sender, EventArgs e)
-        {
-            _selectedFolders.Clear();
-        }
     }
 }
