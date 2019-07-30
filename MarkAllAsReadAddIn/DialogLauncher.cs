@@ -12,7 +12,7 @@ namespace MarkAllRead
         private readonly Dictionary<string, Outlook.Folder> _nameToFolders;
         private readonly HashSet<Outlook.Folder> _selectedFolders;
 
-        public IReadOnlyList<Outlook.Folder> SelectedFolders => _selectedFolders.ToList();
+        public IReadOnlyCollection<Outlook.Folder> SelectedFolders => _selectedFolders;
 
         public DialogLauncher(Outlook.Application application, IEnumerable<string> alreadySelected = null)
         {
