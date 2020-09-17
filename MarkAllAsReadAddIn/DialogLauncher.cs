@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.Office.Interop.Outlook;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using Outlook = Microsoft.Office.Interop.Outlook;
@@ -27,11 +29,10 @@ namespace MarkAllRead
 
         private void LoadFolders(ICollection<string> alreadySelected = null)
         {
-            var folders = _application.Session.DefaultStore.GetRootFolder().Folders;
+            var folders = FlattenFolder(_application.Session.DefaultStore.GetRootFolder() as Folder).GroupBy(f => f.Name).Select(g => g.First()).ToList();
 
-            for (int f = folders.Count; f > 0; f--)
+            foreach (var folder in folders)
             {
-                var folder = folders[f] as Outlook.Folder ?? throw new InvalidCastException();
                 var name = folder.Name;
 
                 if (!_nameToFolders.ContainsKey(name))
@@ -47,6 +48,18 @@ namespace MarkAllRead
             }
 
             checkedListBox1.TopIndex = 0;
+        }
+
+        private IEnumerable<Folder> FlattenFolder(Folder parent)
+        {
+            IEnumerable<Folder> folders = new List<Folder> { parent };
+
+            for (int i = parent.Folders.Count; i > 0; i--)
+            {
+                folders = folders.Union(FlattenFolder(parent.Folders[i] as Folder ?? throw new InvalidCastException()));
+            }
+
+            return folders;
         }
 
         private void okButton_Click(object sender, EventArgs e)
