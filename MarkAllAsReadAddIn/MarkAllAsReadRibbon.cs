@@ -54,22 +54,30 @@ namespace MarkAllRead
             {
                 foreach (var folder in _folders)
                 {
-                    var folderItems = folder.Items.Restrict("[Unread]=true");
+                    if (folder.Items.Count == 0)
+                        continue;
 
-                    for (int m = folderItems.Count; m > 0; m--)
+                    try
                     {
-                        Outlook.MailItem mail = folderItems[m];
+                        var folderItems = folder.Items.Restrict("[Unread]=true");
 
-                        if (mail.UnRead)
+                        for (int m = folderItems.Count; m > 0; m--)
                         {
-                            mail.UnRead = false;
-                            mail.Save();
+                            if (folderItems[m] is Outlook.MailItem mail)
+                            {
+                                if (mail.UnRead)
+                                {
+                                    mail.UnRead = false;
+                                    mail.Save();
+                                }
+
+                                Marshal.ReleaseComObject(mail);
+                            }
                         }
 
-                        Marshal.ReleaseComObject(mail);
+                        Marshal.ReleaseComObject(folderItems);
                     }
-
-                    Marshal.ReleaseComObject(folderItems);
+                    catch { }
                 }
             });
         }
