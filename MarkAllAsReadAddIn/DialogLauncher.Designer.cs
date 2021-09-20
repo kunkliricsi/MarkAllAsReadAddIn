@@ -30,16 +30,16 @@
         {
 			this.cancelButton = new System.Windows.Forms.Button();
 			this.okButton = new System.Windows.Forms.Button();
-			this.checkedListBox1 = new System.Windows.Forms.CheckedListBox();
 			this.selectAllButton = new System.Windows.Forms.Button();
+			this.checkedTreeView1 = new System.Windows.Forms.TreeView();
 			this.SuspendLayout();
 			// 
 			// cancelButton
 			// 
 			this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.cancelButton.Location = new System.Drawing.Point(359, 357);
-			this.cancelButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.cancelButton.Location = new System.Drawing.Point(358, 510);
+			this.cancelButton.Margin = new System.Windows.Forms.Padding(4);
 			this.cancelButton.Name = "cancelButton";
 			this.cancelButton.Size = new System.Drawing.Size(108, 28);
 			this.cancelButton.TabIndex = 0;
@@ -50,8 +50,8 @@
 			// 
 			this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.okButton.Location = new System.Drawing.Point(243, 357);
-			this.okButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.okButton.Location = new System.Drawing.Point(242, 510);
+			this.okButton.Margin = new System.Windows.Forms.Padding(4);
 			this.okButton.Name = "okButton";
 			this.okButton.Size = new System.Drawing.Size(108, 28);
 			this.okButton.TabIndex = 1;
@@ -59,22 +59,10 @@
 			this.okButton.UseVisualStyleBackColor = true;
 			this.okButton.Click += new System.EventHandler(this.okButton_Click);
 			// 
-			// checkedListBox1
-			// 
-			this.checkedListBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.checkedListBox1.CheckOnClick = true;
-			this.checkedListBox1.FormattingEnabled = true;
-			this.checkedListBox1.Location = new System.Drawing.Point(16, 15);
-			this.checkedListBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-			this.checkedListBox1.Name = "checkedListBox1";
-			this.checkedListBox1.Size = new System.Drawing.Size(449, 310);
-			this.checkedListBox1.TabIndex = 2;
-			// 
 			// selectAllButton
 			// 
 			this.selectAllButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.selectAllButton.Location = new System.Drawing.Point(16, 357);
+			this.selectAllButton.Location = new System.Drawing.Point(15, 510);
 			this.selectAllButton.Margin = new System.Windows.Forms.Padding(4);
 			this.selectAllButton.Name = "selectAllButton";
 			this.selectAllButton.Size = new System.Drawing.Size(108, 28);
@@ -83,24 +71,38 @@
 			this.selectAllButton.UseVisualStyleBackColor = true;
 			this.selectAllButton.Click += new System.EventHandler(this.selectAllButton_Click);
 			// 
+			// checkedTreeView1
+			// 
+			this.checkedTreeView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.checkedTreeView1.CheckBoxes = true;
+			this.checkedTreeView1.Location = new System.Drawing.Point(16, 15);
+			this.checkedTreeView1.Name = "checkedTreeView1";
+			this.checkedTreeView1.Size = new System.Drawing.Size(448, 463);
+			this.checkedTreeView1.TabIndex = 4;
+			this.checkedTreeView1.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.checkedTreeView1_AfterCheck);
+			this.checkedTreeView1.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.checkedTreeView1_BeforeSelect);
+			// 
 			// DialogLauncher
 			// 
 			this.AcceptButton = this.okButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.AutoSize = true;
+			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.CancelButton = this.cancelButton;
-			this.ClientSize = new System.Drawing.Size(483, 400);
+			this.ClientSize = new System.Drawing.Size(482, 553);
+			this.Controls.Add(this.checkedTreeView1);
 			this.Controls.Add(this.selectAllButton);
-			this.Controls.Add(this.checkedListBox1);
 			this.Controls.Add(this.okButton);
 			this.Controls.Add(this.cancelButton);
-			this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Margin = new System.Windows.Forms.Padding(4);
 			this.Name = "DialogLauncher";
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Set Selected Folders";
+			this.Shown += new System.EventHandler(this.DialogLauncher_Shown);
 			this.ResumeLayout(false);
 
         }
@@ -109,7 +111,7 @@
 
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button okButton;
-        private System.Windows.Forms.CheckedListBox checkedListBox1;
 		private System.Windows.Forms.Button selectAllButton;
+		private System.Windows.Forms.TreeView checkedTreeView1;
 	}
 }

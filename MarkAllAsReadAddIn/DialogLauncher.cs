@@ -10,7 +10,7 @@ namespace MarkAllRead
 	public partial class DialogLauncher : Form
     {
         private readonly Outlook.Application _application;
-        private readonly Dictionary<string, Outlook.Folder> _nameToFolders;
+        private readonly Dictionary<TreeNode, Outlook.Folder> _nodeToFolders;
         private readonly HashSet<Outlook.Folder> _selectedFolders;
         private bool _selectAllPressed = false;
 
@@ -21,7 +21,7 @@ namespace MarkAllRead
             InitializeComponent();
 
             _application = application;
-            _nameToFolders = new Dictionary<string, Outlook.Folder>();
+            _nodeToFolders = new Dictionary<TreeNode, Outlook.Folder>();
             _selectedFolders = new HashSet<Outlook.Folder>();
 
             LoadFolders(alreadySelected?.ToArray());
@@ -29,65 +29,87 @@ namespace MarkAllRead
 
         private void LoadFolders(ICollection<string> alreadySelected = null)
         {
-            var folders = FlattenFolder(_application.Session.DefaultStore.GetRootFolder() as Folder).GroupBy(f => f.Name).Select(g => g.First()).ToList();
-
-            foreach (var folder in folders)
+            void VisitNode(MAPIFolder folder, TreeNodeCollection nodes)
             {
                 var name = folder.Name;
+                var addedNode = nodes.Add(name);
 
-                if (!_nameToFolders.ContainsKey(name))
-                    _nameToFolders.Add(name, folder);
-
-                var itemIndex = checkedListBox1.Items.Add(name);
+                _nodeToFolders.Add(addedNode, folder as Folder);
 
                 if (alreadySelected?.Contains(name) ?? false)
                 {
-                    checkedListBox1.SetItemChecked(itemIndex, true);
-                    _selectedFolders.Add(folder);
+                    addedNode.Checked = true;
                 }
-            }
 
-            checkedListBox1.TopIndex = 0;
-        }
+                for (int i = folder.Folders.Count; i > 0; i--)
+                {
+                    VisitNode(folder.Folders[i], addedNode.Nodes);
+                }
+			}
 
-        private IEnumerable<Folder> FlattenFolder(Folder parent)
-        {
-            IEnumerable<Folder> folders = new List<Folder> { parent };
-
-            for (int i = parent.Folders.Count; i > 0; i--)
-            {
-                folders = folders.Union(FlattenFolder(parent.Folders[i] as Folder ?? throw new InvalidCastException()));
-            }
-
-            return folders;
+            checkedTreeView1.BeginUpdate();
+            VisitNode(_application.Session.DefaultStore.GetRootFolder(), checkedTreeView1.Nodes);
+            checkedTreeView1.EndUpdate();
         }
 
         private void okButton_Click(object sender, EventArgs e)
         {
             _selectedFolders.Clear();
 
-            foreach (string item in checkedListBox1.CheckedItems)
+            foreach (var checkedNode in Flatten(checkedTreeView1.Nodes).Where(n => n.Checked))
             {
-                _selectedFolders.Add(_nameToFolders[item]);
+                _selectedFolders.Add(_nodeToFolders[checkedNode]);
             }
         }
 
 		private void selectAllButton_Click(object sender, EventArgs e)
 		{
-            void SetAll(bool isChecked)
-			{
-                for (int i = 0; i < checkedListBox1.Items.Count; i++)
-                {
-                    checkedListBox1.SetItemChecked(i, isChecked);
-                }
-            }
-
             _selectAllPressed = !_selectAllPressed;
-            SetAll(_selectAllPressed);
+            SetAll(checkedTreeView1.Nodes, _selectAllPressed);
 
             selectAllButton.Text = (_selectAllPressed
                 ? "Uns" : "S") 
                 + "elect All";
+        }
+
+        private void checkedTreeView1_AfterCheck(object sender, TreeViewEventArgs e)
+        {
+            if (e.Action != TreeViewAction.Unknown)
+            {
+                if (e.Node.Nodes.Count > 0)
+                {
+                    SetAll(e.Node.Nodes, e.Node.Checked);
+                }
+            }
+        }
+
+        private void SetAll(TreeNodeCollection nodeCollection, bool isChecked)
+        {
+            foreach (var node in Flatten(nodeCollection))
+            {
+                node.Checked = isChecked;
+            }
+        }
+
+        private IEnumerable<TreeNode> Flatten(TreeNodeCollection nodeCollection)
+		{
+            foreach (TreeNode node in nodeCollection)
+			{
+                yield return node;
+
+                foreach (var child in Flatten(node.Nodes))
+                    yield return child;
+			}
+		}
+
+		private void checkedTreeView1_BeforeSelect(object sender, TreeViewCancelEventArgs e)
+		{
+            e.Cancel = true;
+		}
+
+		private void DialogLauncher_Shown(object sender, EventArgs e)
+		{
+            checkedTreeView1.Nodes[0].Expand();
 		}
 	}
 }
