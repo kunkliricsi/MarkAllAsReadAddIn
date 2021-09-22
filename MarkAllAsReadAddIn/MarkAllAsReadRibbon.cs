@@ -12,7 +12,7 @@ namespace MarkAllRead
 {
     public partial class MarkAllAsReadRibbon
     {
-        private IReadOnlyCollection<Outlook.Folder> _folders;
+        private IReadOnlyCollection<Outlook.MAPIFolder> _folders;
         private DialogLauncher _form;
 
         private void MarkAllAsRead_Load(object sender, RibbonUIEventArgs e)

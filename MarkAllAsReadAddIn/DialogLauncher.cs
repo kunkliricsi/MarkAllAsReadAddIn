@@ -10,19 +10,19 @@ namespace MarkAllRead
 	public partial class DialogLauncher : Form
     {
         private readonly Outlook.Application _application;
-        private readonly Dictionary<TreeNode, Outlook.Folder> _nodeToFolders;
-        private readonly HashSet<Outlook.Folder> _selectedFolders;
+        private readonly Dictionary<TreeNode, Outlook.MAPIFolder> _nodeToFolders;
+        private readonly HashSet<Outlook.MAPIFolder> _selectedFolders;
         private bool _selectAllPressed = false;
 
-        public IReadOnlyCollection<Outlook.Folder> SelectedFolders => _selectedFolders;
+        public IReadOnlyCollection<Outlook.MAPIFolder> SelectedFolders => _selectedFolders;
 
         public DialogLauncher(Outlook.Application application, IEnumerable<string> alreadySelected = null)
         {
             InitializeComponent();
 
             _application = application;
-            _nodeToFolders = new Dictionary<TreeNode, Outlook.Folder>();
-            _selectedFolders = new HashSet<Outlook.Folder>();
+            _nodeToFolders = new Dictionary<TreeNode, Outlook.MAPIFolder>();
+            _selectedFolders = new HashSet<Outlook.MAPIFolder>();
 
             LoadFolders(alreadySelected?.ToArray());
         }
@@ -34,11 +34,12 @@ namespace MarkAllRead
                 var name = folder.Name;
                 var addedNode = nodes.Add(name);
 
-                _nodeToFolders.Add(addedNode, folder as Folder);
+                _nodeToFolders.Add(addedNode, folder);
 
                 if (alreadySelected?.Contains(name) ?? false)
                 {
                     addedNode.Checked = true;
+                    _selectedFolders.Add(folder);
                 }
 
                 for (int i = folder.Folders.Count; i > 0; i--)
